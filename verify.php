@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Verify Account Number</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+	<div class="container">
+		
+		<?php
+	if(isset($_POST['account_number']) && isset($_POST['banks'])){
+		$num = $_POST['account_number'];
+		$code = $_POST['banks'];
+
+
+		$curl = curl_init();
+		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
+		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+
+		curl_setopt_array($curl, array(
+		  CURLOPT_URL => "https://api.paystack.co/bank/resolve?account_number=$num&bank_code=$code",
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 30,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "GET",
+		  CURLOPT_HTTPHEADER => array(
+		    "Accept: */*",
+		    "Authorization: Bearer sk_test_422f1ec39f7a1b61e536c77188ac24e79e3a596b",
+		    "Cache-Control: no-cache",
+		    "Connection: keep-alive",
+		    "Host: api.paystack.co",
+		    "Postman-Token: 43497e16-d2e4-458c-bc31-761e4095be6b,ebdf1aa3-9fbb-4b57-9355-0a6e2489ade1",
+		    "User-Agent: PostmanRuntime/7.13.0",
+		    "accept-encoding: gzip, deflate",
+		    "cache-control: no-cache",
+		    "cookie: __cfduid=d098b6629f0b2a7bc17f826cb190197081559457317; sails.sid=s%3ADgKhlipvXkRpf6mYJJXtvKCHjsWARygI.EcTy%2BxKrvWqyvblLaN7dKGI%2FwUupL1ZiOEe33LDjCVY"
+		  ),
+		));
+
+		$response = curl_exec($curl);
+		$arr_response = json_decode($response, TRUE);
+		$err = curl_error($curl);
+
+		curl_close($curl);
+
+		if ($err) {
+		  echo "cURL Error #:" . $err;
+		} else {
+?>
+		<h1>Create New Supplier</h1>
+
+		<form action="create_supplier.php" method="post">
+			<div class="form-group">
+				<label for="supplier_name"> Name: </label>
+				<input type="text" name="supplier_name" id="supplier_name" value="<?php echo $arr_response['data']['account_name']; ?>">
+			</div>
+			<div class="form-group">
+				<label for="description"> Enter Description: </label>
+				<input type="text" name="description" id="description">
+			</div>
+			<div class="form-group">
+				<label for="account_number"> Enter Account Number: </label>
+				<input type="text" name="s_account_number" id="s_account_number" value="<?php echo $arr_response['data']['account_number']; ?>">
+			</div>
+			<div class="form-group">
+				<input type="hidden" name="bank_code" id="bank_code" value="<?php echo $code; ?>">
+			</div>
+			<button type="submit" class="btn btn-primary">Submit</button>
+		</form>
+
+
+
+	<?php
+	 } } 
+	?>
+		<h2>Check Account Details</h2>
+	</div>
+	<div class="container">
+	<form action="" method="post">
+			<div class="form-group">
+				<label for="account_number"> Enter Account Number: </label>
+				<input type="text" name="account_number" id="account_number">
+			</div>
+			<div class="form-group">
+					<label for="banks"> Enter Bank</label>
+				  	<select name="banks" class="custom-select">
+				  	<?php
+				  		$curl = curl_init();
+						curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
+						curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+
+						curl_setopt_array($curl, array(
+						  CURLOPT_URL => "https://api.paystack.co/bank",
+						  CURLOPT_RETURNTRANSFER => true,
+						  CURLOPT_ENCODING => "",
+						  CURLOPT_MAXREDIRS => 10,
+						  CURLOPT_TIMEOUT => 30,
+						  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+						  CURLOPT_CUSTOMREQUEST => "GET",
+						  CURLOPT_HTTPHEADER => array(
+						    "Accept: */*",
+						    "Authorization: Bearer sk_test_422f1ec39f7a1b61e536c77188ac24e79e3a596b",
+						    "Cache-Control: no-cache",
+						    "Connection: keep-alive",
+						    "Host: api.paystack.co",
+						    "Postman-Token: ca71bbad-f82f-4099-9cf6-77a420656c6b,5e44304c-e85c-4e39-a6a0-4eabb5310cef",
+						    "User-Agent: PostmanRuntime/7.13.0",
+						    "accept-encoding: gzip, deflate",
+						    "cache-control: no-cache",
+						    "cookie: __cfduid=d098b6629f0b2a7bc17f826cb190197081559457317; sails.sid=s%3AnoB8rDKHACqLi1YpTJgKeuJDIcmeCess.3lFr3fzVlX0JzEja4f5iWHBzv%2FtKmzxjBzDKyAmenEI"
+						  ),
+						));
+
+						$response = curl_exec($curl);
+						$arr_response = json_decode($response, TRUE);
+						$err = curl_error($curl);
+
+						curl_close($curl);
+
+						if ($err) {
+						  echo "cURL Error #:" . $err;
+						} else {
+						  // echo var_dump($arr_response);
+							for ($j = 0; $j < count($arr_response['data']); $j++){
+
+				  	 ?>
+				    <option value="<?php echo $arr_response['data'][$j]['code']; ?>"><?php echo $arr_response['data'][$j]['name']; ?></option><?php }} ?>
+				  </select>
+			</div>
+			<button type="submit" class="btn btn-primary">Submit</button>
+		</form>
+	</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>
