@@ -12,6 +12,7 @@
 		<div class="row text-center">
 			<div class="col-sm">
 				<h1>More Dough</h1>
+				<h2>Welcome to the new homepage</h2>
 			</div>
 		</div>
 		<div class="row">
